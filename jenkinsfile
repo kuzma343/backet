@@ -1,0 +1,29 @@
+pipeline {
+    agent any
+    
+    stages {
+        stage('Download Terraform Configuration') {
+            steps {
+                sh 'aws s3 cp s3://kuzma343bucket/main.tf /home/kuzma/'
+            }
+        }
+        
+        stage('Terraform Init') {
+            steps {
+                sh 'cd /home/kuzma && terraform init'
+            }
+        }
+
+        stage('Terraform Plan') {
+            steps {
+                sh 'cd /home/kuzma && terraform plan -out=tfplan'
+            }
+        }
+        
+        stage('Terraform Apply') {
+            steps {
+                sh 'cd /home/kuzma && terraform apply -auto-approve tfplan'
+            }
+        }
+    }
+}
